@@ -22,6 +22,7 @@ selected_data$status <- factor(selected_data$status,
 billionaire_data <- selected_data[complete.cases(selected_data[, c("age", "finalWorth", "status")]), ]
 dim(billionaire_data)
 
+#------------------------------------- ---------------
 
 # Compute summary stats for age
 mean_age <- mean(billionaire_data$age)
@@ -35,8 +36,27 @@ quartiles_age_2 <- quantile(billionaire_data$age, probs = c(0.5))
 quartiles_age_3 <- quantile(billionaire_data$age, probs = c(0.75))
 quartile_age <- quantile(billionaire_data$age, probs = c(0.25, 0.5, 0.75))
 iqr_age <- IQR(billionaire_data$age)
+
 cv_age <- sd_age / mean_age
+cv_age_percentage= cv_age*100
+cv_age_percentage=round(cv_age_percentage,2)
+cv_age_percentage
+
+
 print(mean_age)
+print(median_age)
+print(mode_age)
+print(sd_age)
+print(var_age)
+print(range_age)
+print(quartiles_age_1)
+print(quartiles_age_2)
+print(quartiles_age_3)
+print(quartile_age)
+print(iqr_age)
+print(cv_age)
+summary(billionaire_data)
+
 
 # Compute summary stats for finalWorth
 mean_fw <- mean(billionaire_data$finalWorth)
@@ -52,14 +72,33 @@ quartile_fw <- quantile(billionaire_data$finalWorth, probs = c(0.25, 0.5, 0.75))
 iqr_fw <- IQR(billionaire_data$finalWorth)
 cv_fw <- sd_fw / mean_fw
 
+cv_fw_percentage= cv_fw*100
+cv_fw_percentage=round(cv_fw_percentage,2)
+cv_fw_percentage
+
+max(billionaire_data$finalWorth)
+
+
+print(mean_fw)
+print(median_fw)
+print(mode_fw)
+print(sd_fw)
+print(var_fw)
+print(range_fw)
+print(quartiles_fw_1)
+print(quartiles_fw_2)
 print(quartiles_fw_3)
+print(quartile_fw)
+print(iqr_fw)
+print(cv_fw)
 
 summary(billionaire_data)
 
 
-# c)
-# Set layout for multiple plots
-par(mfrow = c(2, 2))
+
+
+#--------------------------------------------------------------------------------------------
+
 # Boxplot
 boxplot(billionaire_data$age, 
         main = "Boxplot of Billionaire Ages",
@@ -70,7 +109,8 @@ hist(billionaire_data$age,
      breaks = 20, 
      col = "skyblue",
      main = "Histogram of Billionaire Ages",
-     xlab = "Age (Years)")
+     xlab = "Age (Years)",
+     ylab = "No of Billionaires")
 
 # Boxplot
 boxplot(billionaire_data$finalWorth, 
@@ -82,28 +122,57 @@ hist(billionaire_data$finalWorth,
      breaks = 20, 
      col = "lightgreen",
      main = "Histogram of Net Worth",
-     xlab = "USD Billion")
+     xlab = "USD Billion",
+     ylab = "No of Billionaires")
 
-
-# Using ggplot
-
-ggplot(billionaire_data, aes(x = age)) +
-  geom_histogram(bins = 30, fill = "skyblue", color = "black") +
-  labs(title = "Distribution of Billionaire Ages", x = "Age", y = "Frequency")
-
-ggplot(billionaire_data, aes(x = finalWorth)) +
-  geom_histogram(bins = 50, fill = "salmon", color = "black") +
-  labs(title = "Distribution of Billionaire Net Worth", x = "Net Worth ($)", y = "Frequency")
-
-# Boxplots
-ggplot(billionaire_data, aes(y = age)) +
-  geom_boxplot(fill = "skyblue") +
-  labs(title = "Boxplot: Billionaire Age")
-
-ggplot(billionaire_data, aes(y = finalWorth)) +
-  geom_boxplot(fill = "salmon") +
-  labs(title = "Boxplot: Net Worth ($)")
 #--------------------------------------- END of Part A ---------------------------------------
+
+
+#----------- Start of Part B -------------------#
+
+
+# Calculate mean and standard deviation
+mean_age <- mean(billionaire_data$age)
+sd_age <- sd(billionaire_data$age)
+
+# Define intervals based on SD
+lower_68 <- mean_age - sd_age
+upper_68 <- mean_age + sd_age
+
+lower_95 <- mean_age - 2 * sd_age
+upper_95 <- mean_age + 2 * sd_age
+
+lower_997 <- mean_age - 3 * sd_age
+upper_997 <- mean_age + 3 * sd_age
+
+# Count how many data points fall within each range
+within_68 <- sum(billionaire_data$age >= lower_68 & billionaire_data$age <= upper_68, na.rm = TRUE)
+within_95 <- sum(billionaire_data$age >= lower_95 & billionaire_data$age <= upper_95, na.rm = TRUE)
+within_997 <- sum(billionaire_data$age >= lower_997 & billionaire_data$age <= upper_997, na.rm = TRUE)
+
+# Calculate proportions (percentages)
+total_obs <- nrow(billionaire_data)
+
+prop_within_68 <- (within_68 / total_obs) * 100
+prop_within_95 <- (within_95 / total_obs) * 100
+prop_within_997 <- (within_997 / total_obs) * 100
+
+# Print results
+print(paste("Mean Age:", round(mean_age, 2)))
+print(paste("Standard Deviation of Age:", round(sd_age, 2)))
+print(paste("Proportion within 1 SD (Expected ~68%):", round(prop_within_68, 2), "%"))
+print(paste("Proportion within 2 SDs (Expected ~95%):", round(prop_within_95, 2), "%"))
+print(paste("Proportion within 3 SDs (Expected ~99.7%):", round(prop_within_997, 2), "%"))
+
+
+
+
+
+
+
+
+
+
 
 
 
