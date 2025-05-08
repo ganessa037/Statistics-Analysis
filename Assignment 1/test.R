@@ -115,27 +115,28 @@ hist(billionaire_data$age,
 # Boxplot
 boxplot(billionaire_data$finalWorth, 
         main = "Boxplot of Net Worth",
-        ylab = "USD Billion")
+        ylab = "USD ($ Millions)")
 
 # Histogram
 hist(billionaire_data$finalWorth, 
      breaks = 20, 
      col = "lightgreen",
      main = "Histogram of Net Worth",
-     xlab = "USD Billion",
+     xlab = "USD ($ Millions)",
      ylab = "No of Billionaires")
+
 
 #--------------------------------------- END of Part A ---------------------------------------
 
 
 #----------- Start of Part B -------------------#
 
-
-# Calculate mean and standard deviation
+#q1
+# Step 1: Get mean and standard deviation of Age
 mean_age <- mean(billionaire_data$age)
 sd_age <- sd(billionaire_data$age)
 
-# Define intervals based on SD
+# Step 2: Calculate boundaries for 1, 2, and 3 standard deviations
 lower_68 <- mean_age - sd_age
 upper_68 <- mean_age + sd_age
 
@@ -145,37 +146,65 @@ upper_95 <- mean_age + 2 * sd_age
 lower_997 <- mean_age - 3 * sd_age
 upper_997 <- mean_age + 3 * sd_age
 
-# Count how many data points fall within each range
-within_68 <- sum(billionaire_data$age >= lower_68 & billionaire_data$age <= upper_68, na.rm = TRUE)
-within_95 <- sum(billionaire_data$age >= lower_95 & billionaire_data$age <= upper_95, na.rm = TRUE)
-within_997 <- sum(billionaire_data$age >= lower_997 & billionaire_data$age <= upper_997, na.rm = TRUE)
-
-# Calculate proportions (percentages)
-total_obs <- nrow(billionaire_data)
-
-prop_within_68 <- (within_68 / total_obs) * 100
-prop_within_95 <- (within_95 / total_obs) * 100
-prop_within_997 <- (within_997 / total_obs) * 100
-
-# Print results
-print(paste("Mean Age:", round(mean_age, 2)))
-print(paste("Standard Deviation of Age:", round(sd_age, 2)))
-print(paste("Proportion within 1 SD (Expected ~68%):", round(prop_within_68, 2), "%"))
-print(paste("Proportion within 2 SDs (Expected ~95%):", round(prop_within_95, 2), "%"))
-print(paste("Proportion within 3 SDs (Expected ~99.7%):", round(prop_within_997, 2), "%"))
+# Step 3: Count how many data points fall within each range
+within_68 <- subset(billionaire_data, age > lower_68 & age < upper_68)
+within_95 <- subset(billionaire_data, age > lower_95 & age < upper_95)
+within_997 <- subset(billionaire_data, age > lower_997 & age < upper_997)
 
 
+len_row<- length(billionaire_data$age)
+prop_1sd <- nrow(within_68) / len_row
+prop_2sd <- nrow(within_95) / len_row
+prop_3sd <- nrow(within_997) / len_row
+
+# Step 5: Print results as percentages
+print(paste("Percentage within ±1 SD: ", round(prop_1sd * 100, 2), "%"))
+print(paste("Percentage within ±2 SD: ", round(prop_2sd * 100, 2), "%"))
+print(paste("Percentage within ±3 SD: ", round(prop_3sd * 100, 2), "%"))
+
+
+#q2
+# Create QQ-plot for Age
+qqnorm(billionaire_data$age, main = "QQ Plot for Billionaire Age")
+qqline(billionaire_data$age, col = "red")  # Add reference line
+shapiro.test(billionaire_data$age)
+
+#q3:
+# 1. Scatter plot with regression line
+plot(billionaire_data$age, billionaire_data$finalWorth,
+     main = "Age vs Net Worth of Billionaires",
+     xlab = "Age",
+     ylab = "Net Worth ($ Millions)",
+     pch = 19,
+     col = "steelblue")
+
+# Add regression line
+abline(lm(finalWorth ~ age, data = billionaire_data), col = "red", lwd = 2)
+
+# 2. Calculate Pearson correlation coefficient
+correlation <- cor(billionaire_data$age, billionaire_data$finalWorth, method = "pearson")
+r2_percentage <- correlation * 100
+print(paste("Pearson Correlation Coefficient (r):", round(correlation, 3)))
+print(paste("Percentage (%):", round(r2_percentage, 3)))
 
 
 
+age <- billionaire_data$age
+net_worth <- billionaire_data$finalWorth
 
+mean_age <- mean(age)
+mean_net_worth <- mean(net_worth)
 
+Sxx <- sum((age - mean_age)^2)
+Syy <- sum((net_worth - mean_net_worth)^2)
+Sxy <- sum((age - mean_age) * (net_worth - mean_net_worth))
 
+r <- Sxy / sqrt(Sxx * Syy)
 
-
-
-
-
+print(paste("Pearson Correlation Coefficient (r):", round(r, 3)))
+r2_percentage <- r * 100
+print(paste("Pearson Correlation Coefficient (r):", round(r, 3)))
+print(paste("Percentage (%):", round(r2_percentage, 3)))
 
 
 
