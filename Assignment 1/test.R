@@ -1,15 +1,6 @@
-billionaire_raw_dataset <-  read.csv("U:/[1] GANESSA/Code/MMU_CS/Y2T3/Statistics & Analysis/Assignment 1/Billionaires Statistics Dataset.csv")
-print(billionaire_raw_dataset)
+#billionaire_raw_dataset <-  read.csv("U:/[1] GANESSA/Code/MMU_CS/Y2T3/Statistics & Analysis/Assignment 1/Billionaires Statistics Dataset.csv")
+billionaire_raw_dataset <-  read.csv("D:/[1] GanessaWork/degree_Computer_Science/2nd Year 3rd Sem/Statistics-Analysis/Assignment 1/Billionaires Statistics Dataset.csv")
 
-
-names(billionaire_raw_dataset)
-head(billionaire_raw_dataset)
-str(billionaire_raw_dataset)
-summary(billionaire_raw_dataset)
-dim(billionaire_raw_dataset)
-
-
-#Start from here:
 # Select relevant columns
 selected_data <- billionaire_raw_dataset[, c("age", "finalWorth", "status")]
 
@@ -20,11 +11,9 @@ selected_data$status <- factor(selected_data$status,
 
 # Remove rows where age, finalWorth, or status is NA
 billionaire_data <- selected_data[complete.cases(selected_data[, c("age", "finalWorth", "status")]), ]
-dim(billionaire_data)
-
 #------------------------------------- ---------------
 
-# Compute summary stats for age
+# Summary for age
 mean_age <- mean(billionaire_data$age)
 median_age <- median(billionaire_data$age)
 mode_age <- which.max(table(billionaire_data$age))
@@ -36,7 +25,6 @@ quartiles_age_2 <- quantile(billionaire_data$age, probs = c(0.5))
 quartiles_age_3 <- quantile(billionaire_data$age, probs = c(0.75))
 quartile_age <- quantile(billionaire_data$age, probs = c(0.25, 0.5, 0.75))
 iqr_age <- IQR(billionaire_data$age)
-
 cv_age <- sd_age / mean_age
 cv_age_percentage= cv_age*100
 cv_age_percentage=round(cv_age_percentage,2)
@@ -58,7 +46,7 @@ print(cv_age)
 summary(billionaire_data)
 
 
-# Compute summary stats for finalWorth
+# Summary for finalWorth
 mean_fw <- mean(billionaire_data$finalWorth)
 median_fw <- median(billionaire_data$finalWorth)
 mode_fw <- which.max(table(billionaire_data$finalWorth))
@@ -71,7 +59,6 @@ quartiles_fw_3 <- quantile(billionaire_data$finalWorth, probs = c(0.75))
 quartile_fw <- quantile(billionaire_data$finalWorth, probs = c(0.25, 0.5, 0.75))
 iqr_fw <- IQR(billionaire_data$finalWorth)
 cv_fw <- sd_fw / mean_fw
-
 cv_fw_percentage= cv_fw*100
 cv_fw_percentage=round(cv_fw_percentage,2)
 cv_fw_percentage
@@ -131,12 +118,12 @@ hist(billionaire_data$finalWorth,
 
 #----------- Start of Part B -------------------#
 
-#q1
-# Step 1: Get mean and standard deviation of Age
+
+# Get mean and standard deviation of Age
 mean_age <- mean(billionaire_data$age)
 sd_age <- sd(billionaire_data$age)
 
-# Step 2: Calculate boundaries for 1, 2, and 3 standard deviations
+# Calculate boundaries for 1, 2, and 3 standard deviations
 lower_68 <- mean_age - sd_age
 upper_68 <- mean_age + sd_age
 
@@ -146,7 +133,7 @@ upper_95 <- mean_age + 2 * sd_age
 lower_997 <- mean_age - 3 * sd_age
 upper_997 <- mean_age + 3 * sd_age
 
-# Step 3: Count how many data points fall within each range
+# Count how many data points fall within each range
 within_68 <- subset(billionaire_data, age > lower_68 & age < upper_68)
 within_95 <- subset(billionaire_data, age > lower_95 & age < upper_95)
 within_997 <- subset(billionaire_data, age > lower_997 & age < upper_997)
@@ -157,20 +144,20 @@ prop_1sd <- nrow(within_68) / len_row
 prop_2sd <- nrow(within_95) / len_row
 prop_3sd <- nrow(within_997) / len_row
 
-# Step 5: Print results as percentages
+# Print results as percentages
 print(paste("Percentage within ±1 SD: ", round(prop_1sd * 100, 2), "%"))
 print(paste("Percentage within ±2 SD: ", round(prop_2sd * 100, 2), "%"))
 print(paste("Percentage within ±3 SD: ", round(prop_3sd * 100, 2), "%"))
 
 
 #q2
-# Create QQ-plot for Age
+# QQ-plot for Age
 qqnorm(billionaire_data$age, main = "QQ Plot for Billionaire Age")
 qqline(billionaire_data$age, col = "red")  # Add reference line
 shapiro.test(billionaire_data$age)
 
 #q3:
-# 1. Scatter plot with regression line
+# Scatter plot
 plot(billionaire_data$age, billionaire_data$finalWorth,
      main = "Age vs Net Worth of Billionaires",
      xlab = "Age",
@@ -178,7 +165,7 @@ plot(billionaire_data$age, billionaire_data$finalWorth,
      pch = 19,
      col = "steelblue")
 
-# Add regression line
+# regression line
 abline(lm(finalWorth ~ age, data = billionaire_data), col = "red", lwd = 2)
 
 # 2. Calculate Pearson correlation coefficient
@@ -189,22 +176,29 @@ print(paste("Percentage (%):", round(r2_percentage, 3)))
 
 
 
+
+# Extract 'age' and 'net_worth' variables
 age <- billionaire_data$age
 net_worth <- billionaire_data$finalWorth
 
-mean_age <- mean(age)
+# Calculate means
+mean_age <- mean(age) 
 mean_net_worth <- mean(net_worth)
 
-Sxx <- sum((age - mean_age)^2)
-Syy <- sum((net_worth - mean_net_worth)^2)
-Sxy <- sum((age - mean_age) * (net_worth - mean_net_worth))
+# Calculate Sxx, Syy, and Sxy
+Sxx <- sum((age - mean_age)^2)  # Sum of squared deviations of age
+Syy <- sum((net_worth - mean_net_worth)^2)  # Sum of squared deviations of net worth
+Sxy <- sum((age - mean_age) * (net_worth - mean_net_worth))  # Sum of cross-products
 
+# Compute Pearson correlation coefficient (r)
 r <- Sxy / sqrt(Sxx * Syy)
 
-print(paste("Pearson Correlation Coefficient (r):", round(r, 3)))
-r2_percentage <- r * 100
-print(paste("Pearson Correlation Coefficient (r):", round(r, 3)))
-print(paste("Percentage (%):", round(r2_percentage, 3)))
+# Compute R-squared (coefficient of determination)
+r_squared <- r^2
 
+# Print results
+print(paste("Pearson Correlation Coefficient (r):", round(r, 3)))
+print(paste("R-Squared (Proportion of Variance Explained):", round(r_squared, 3)))
+print(paste("Percentage (%):", round(r_squared*100, 1)))
 
 
